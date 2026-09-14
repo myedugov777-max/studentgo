@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Student GO</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#064e3b',
+                        },
+                        dark: {
+                            bg: '#080c0a',
+                            card: '#101712',
+                            hover: '#16221a',
+                            border: '#1c2d22',
+                            subtle: '#263b2d'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* Disable touch blue highlight on mobile devices */
+        * {
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none;
+            outline: none !important;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #080c0a;
+            color: #e2e8f0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Completely hide scrollbars across all browsers */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none !important;  /* IE and Edge */
+            scrollbar-width: none !important;  /* Firefox */
+        }
+
+        .glass-header {
+            background: rgba(8, 12, 10, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .glow-accent {
+            box-shadow: 0 0 45px -5px rgba(16, 185, 129, 0.18);
+        }
+
+        .glow-pill {
+            box-shadow: 0 0 25px 0px rgba(16, 185, 129, 0.22);
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Carousel item snap styling */
+        .carousel-card {
+            scroll-snap-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-brand-500 selection:text-black no-scrollbar">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 glass-header border-b border-dark-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 shrink-0 group">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-all duration-300">
+                    <i class="fa-solid fa-bolt text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-tight text-white block leading-none">
+                        Student<span class="text-brand-400"> GO</span>
+                    </span>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-brand-500/80">Android App</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center gap-8 text-xs font-semibold text-slate-300">
+                <a href="#features" class="hover:text-brand-400 transition-colors">Возможности</a>
+                <a href="#carousel-section" class="hover:text-brand-400 transition-colors">Скриншоты</a>
+                <a href="#install-guide" class="hover:text-brand-400 transition-colors">Инструкция APK</a>
+                <a href="#specs" class="hover:text-brand-400 transition-colors">Требования</a>
+                <a href="#faq" class="hover:text-brand-400 transition-colors">FAQ</a>
+            </nav>
+
+            <!-- APK Direct Download Button -->
+            <div class="flex items-center gap-3">
+                <button onclick="triggerDirectDownload()" class="flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 active:scale-95 text-slate-950 font-extrabold text-xs transition-all shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-download text-sm"></i>
+                    <span>Скачать</span>
+                    <span class="hidden sm:inline-block px-1.5 py-0.5 rounded bg-slate-950/20 text-[10px] font-mono">24.5 МБ</span>
+                </button>
+
+                <!-- Mobile Navigation Toggle -->
+                <button id="mobileMenuBtn" aria-label="Открыть меню" class="lg:hidden p-2.5 rounded-xl bg-dark-card border border-dark-border text-slate-300 active:bg-dark-hover">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden border-b border-dark-border px-4 py-4 bg-dark-bg/98">
+            <div class="flex flex-col gap-2 text-sm font-medium text-slate-300">
+                <a href="#features" class="mobile-link py-2.5 px-3 rounded-lg hover:bg-dark-card">Возможности приложения</a>
+                <a href="#carousel-section" class="mobile-link py-2.5 px-3 rounded-lg hover:bg-dark-card">Скриншоты интерфейса</a>
+                <a href="#install-guide" class="mobile-link py-2.5 px-3 rounded-lg hover:bg-dark-card">Инструкция по установке</a>
+                <a href="#specs" class="mobile-link py-2.5 px-3 rounded-lg hover:bg-dark-card">Характеристики</a>
+                <a href="#faq" class="mobile-link py-2.5 px-3 rounded-lg hover:bg-dark-card">Частые вопросы (FAQ)</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-8 pb-14 md:pt-14 md:pb-20 overflow-hidden">
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-brand-500/10 rounded-full blur-[140px] -z-10 pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="rounded-3xl bg-gradient-to-b from-dark-card to-dark-bg border border-dark-border p-6 sm:p-10 lg:p-12 relative glow-accent overflow-hidden">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <!-- Hero Content Left -->
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        
+                        <!-- Status Pill -->
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-900/50 border border-brand-700/60 text-brand-400 text-xs font-bold uppercase tracking-wider">
+                            <span class="flex h-2 w-2 rounded-full bg-brand-400 animate-pulse-slow"></span>
+                            <i class="fa-brands fa-android text-sm"></i> Прямая установка файла
+                        </div>
+
+                        <!-- Main Headline -->
+                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+                            Единый помощник для вашей учёбы <br class="hidden sm:block"/>
+                            <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-emerald-300 to-teal-200">Student GO</span>
+                        </h1>
+
+                        <!-- Description -->
+                        <p class="text-sm sm:text-base text-slate-400 max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                            Интерактивное расписание пар с чётностью недель, список одногруппников и преподавателей, личный помощник и многое другое в одном приложении.
+                        </p>
+
+                        <!-- Action Buttons -->
+                        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                            <button onclick="triggerDirectDownload()" class="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-brand-500 hover:bg-brand-400 active:scale-95 text-slate-950 font-black text-sm transition-all shadow-xl shadow-brand-500/25">
+                                <i class="fa-solid fa-file-arrow-down text-lg"></i>
+                                <div class="text-left">
+                                    <div class="leading-none">Скачать Student GO</div>
+                                    <div class="text-[10px] opacity-80 font-normal mt-0.5">APK (v1.1.0) | 24.5 МБ</div>
+                                </div>
+                            </button>
+
+                            <a href="#install-guide" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-dark-hover border border-dark-border text-slate-300 hover:text-white font-bold text-xs transition-all">
+                                <i class="fa-solid fa-circle-question text-brand-400"></i>
+                                <span>Как установить?</span>
+                            </a>
+                        </div>
+
+                        <!-- Security Notice -->
+                        <div class="flex items-center justify-center lg:justify-start gap-2 text-[11px] text-slate-400 pt-1">
+                            <i class="fa-solid fa-shield-check text-brand-400"></i>
+                            <span>Прямая и быстрая загрузка без посредников и Google Play</span>
+                        </div>
+
+                        <!-- Quick App Specs -->
+                        <div class="pt-6 grid grid-cols-3 gap-3 border-t border-dark-border/60 text-center lg:text-left max-w-md mx-auto lg:mx-0">
+                            <div>
+                                <div class="text-[11px] text-slate-500">Версия</div>
+                                <div class="text-xs sm:text-sm font-bold text-slate-200 font-mono">1.1.0</div>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-500">Размер</div>
+                                <div class="text-xs sm:text-sm font-bold text-slate-200 font-mono">24.5 МБ</div>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-500">Система</div>
+                                <div class="text-xs sm:text-sm font-bold text-brand-400">Android 7.0+</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hero Preview Image Container -->
+                    <div class="lg:col-span-5 flex justify-center relative">
+                        <div class="w-full max-w-[280px] sm:max-w-[320px] rounded-[36px] bg-dark-bg p-2 sm:p-3 border-2 border-dark-border glow-pill shadow-2xl relative overflow-hidden group">
+                            <img 
+                                src="assets/images/hero-preview.png" 
+                                alt="Student GO App Interface" 
+                                class="w-full h-auto rounded-[28px] object-cover block transition-transform duration-500 group-hover:scale-[1.02]"
+                                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'320\' height=\'640\' viewBox=\'0 0 320 640\' fill=\'%23101712\'><rect width=\'320\' height=\'640\' fill=\'%23101712\'/><rect x=\'20\' y=\'20\' width=\'280\' height=\'600\' rx=\'24\' fill=\'%23080c0a\' stroke=\'%231c2d22\' stroke-width=\'2\'/><text x=\'50%\' y=\'45%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2310b981\' font-family=\'sans-serif\' font-size=\'16\' font-weight=\'bold\'>assets/images/</text><text x=\'50%\' y=\'52%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23ffffff\' font-family=\'sans-serif\' font-size=\'14\'>hero-preview.png</text></svg>'"
+                            />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Core Modules Section -->
+    <section id="features" class="py-14 bg-dark-card/30 border-y border-dark-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
+                <div class="text-xs font-bold text-brand-400 uppercase tracking-widest">Возможности</div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white">Всё необходимое под рукой</h2>
+                <p class="text-slate-400 text-xs sm:text-sm">Помощь от сессии до сессии</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Module 1 -->
+                <div class="p-6 rounded-2xl bg-dark-card border border-dark-border hover:border-brand-500/50 transition-all space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Расписание</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Автоматический учёт чётных и нечётных недель, аудиторий и имён преподавателей.
+                    </p>
+                </div>
+
+                <!-- Module 2 -->
+                <div class="p-6 rounded-2xl bg-dark-card border border-dark-border hover:border-brand-500/50 transition-all space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Список одногруппников</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Мгновенно показывает вам список одногруппников и контакты преподавателей.
+                    </p>
+                </div>
+
+                <!-- Module 3 -->
+                <div class="p-6 rounded-2xl bg-dark-card border border-dark-border hover:border-brand-500/50 transition-all space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Искусственный интеллект</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Поможет решить ваши вопросы и даст полезные советы по учёбе.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshot Horizontal Carousel Section -->
+    <section id="carousel-section" class="py-16 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div class="space-y-1">
+                    <div class="text-xs font-bold text-brand-400 uppercase tracking-widest">Интерфейс</div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Обзор приложения</h2>
+                </div>
+
+                <!-- Carousel Controls -->
+                <div class="flex items-center gap-3">
+                    <button onclick="scrollCarousel('left')" aria-label="Назад" class="w-11 h-11 rounded-xl bg-dark-card border border-dark-border hover:border-brand-500/50 active:scale-95 text-slate-300 flex items-center justify-center transition-all">
+                        <i class="fa-solid fa-chevron-left text-sm"></i>
+                    </button>
+                    <button onclick="scrollCarousel('right')" aria-label="Вперед" class="w-11 h-11 rounded-xl bg-dark-card border border-dark-border hover:border-brand-500/50 active:scale-95 text-slate-300 flex items-center justify-center transition-all">
+                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Horizontal Scroll Container (No Scrollbar) -->
+            <div id="screenshotCarousel" class="flex items-center gap-6 overflow-x-auto no-scrollbar scroll-smooth py-4 px-1" style="scroll-snap-type: x mandatory;">
+                
+                <!-- Screenshot Card 1 -->
+                <div class="carousel-card min-w-[260px] sm:min-w-[280px] max-w-[280px] shrink-0">
+                    <div class="w-full aspect-[9/19] rounded-3xl bg-dark-card border border-dark-border overflow-hidden p-1.5 shadow-xl hover:border-brand-500/50 transition-all">
+                        <img 
+                            src="assets/images/screenshot-1.png" 
+                            alt="Student GO Скриншот 1" 
+                            class="w-full h-full object-cover rounded-[20px]" 
+                            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'560\' viewBox=\'0 0 280 560\' fill=\'%23101712\'><rect width=\'280\' height=\'560\' fill=\'%23101712\'/><rect x=\'12\' y=\'12\' width=\'256\' height=\'536\' rx=\'16\' fill=\'%23080c0a\' stroke=\'%231c2d22\' stroke-width=\'2\'/><text x=\'50%\' y=\'45%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2310b981\' font-family=\'sans-serif\' font-size=\'14\' font-weight=\'bold\'>assets/images/</text><text x=\'50%\' y=\'52%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23ffffff\' font-family=\'sans-serif\' font-size=\'12\'>screenshot-1.png</text></svg>'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Screenshot Card 2 -->
+                <div class="carousel-card min-w-[260px] sm:min-w-[280px] max-w-[280px] shrink-0">
+                    <div class="w-full aspect-[9/19] rounded-3xl bg-dark-card border border-dark-border overflow-hidden p-1.5 shadow-xl hover:border-brand-500/50 transition-all">
+                        <img 
+                            src="assets/images/screenshot-2.png" 
+                            alt="Student GO Скриншот 2" 
+                            class="w-full h-full object-cover rounded-[20px]" 
+                            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'560\' viewBox=\'0 0 280 560\' fill=\'%23101712\'><rect width=\'280\' height=\'560\' fill=\'%23101712\'/><rect x=\'12\' y=\'12\' width=\'256\' height=\'536\' rx=\'16\' fill=\'%23080c0a\' stroke=\'%231c2d22\' stroke-width=\'2\'/><text x=\'50%\' y=\'45%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2310b981\' font-family=\'sans-serif\' font-size=\'14\' font-weight=\'bold\'>assets/images/</text><text x=\'50%\' y=\'52%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23ffffff\' font-family=\'sans-serif\' font-size=\'12\'>screenshot-2.png</text></svg>'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Screenshot Card 3 -->
+                <div class="carousel-card min-w-[260px] sm:min-w-[280px] max-w-[280px] shrink-0">
+                    <div class="w-full aspect-[9/19] rounded-3xl bg-dark-card border border-dark-border overflow-hidden p-1.5 shadow-xl hover:border-brand-500/50 transition-all">
+                        <img 
+                            src="assets/images/screenshot-3.png" 
+                            alt="Student GO Скриншот 3" 
+                            class="w-full h-full object-cover rounded-[20px]" 
+                            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'560\' viewBox=\'0 0 280 560\' fill=\'%23101712\'><rect width=\'280\' height=\'560\' fill=\'%23101712\'/><rect x=\'12\' y=\'12\' width=\'256\' height=\'536\' rx=\'16\' fill=\'%23080c0a\' stroke=\'%231c2d22\' stroke-width=\'2\'/><text x=\'50%\' y=\'45%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2310b981\' font-family=\'sans-serif\' font-size=\'14\' font-weight=\'bold\'>assets/images/</text><text x=\'50%\' y=\'52%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23ffffff\' font-family=\'sans-serif\' font-size=\'12\'>screenshot-3.png</text></svg>'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Screenshot Card 4 -->
+                <div class="carousel-card min-w-[260px] sm:min-w-[280px] max-w-[280px] shrink-0">
+                    <div class="w-full aspect-[9/19] rounded-3xl bg-dark-card border border-dark-border overflow-hidden p-1.5 shadow-xl hover:border-brand-500/50 transition-all">
+                        <img 
+                            src="assets/images/screenshot-4.png" 
+                            alt="Student GO Скриншот 4" 
+                            class="w-full h-full object-cover rounded-[20px]" 
+                            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'560\' viewBox=\'0 0 280 560\' fill=\'%23101712\'><rect width=\'280\' height=\'560\' fill=\'%23101712\'/><rect x=\'12\' y=\'12\' width=\'256\' height=\'536\' rx=\'16\' fill=\'%23080c0a\' stroke=\'%231c2d22\' stroke-width=\'2\'/><text x=\'50%\' y=\'45%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2310b981\' font-family=\'sans-serif\' font-size=\'14\' font-weight=\'bold\'>assets/images/</text><text x=\'50%\' y=\'52%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23ffffff\' font-family=\'sans-serif\' font-size=\'12\'>screenshot-4.png</text></svg>'"
+                        />
+                    </div>
+                </div>
+
+                <!-- Screenshot Card 5 -->
+                <div class="carousel-card min-w-[260px] sm:min-w-[280px] max-w-[280px] shrink-0">
+                    <div class="w-full aspect-[9/19] rounded-3xl bg-dark-card border border-dark-border overflow-hidden p-1.5 shadow-xl hover:border-brand-500/50 transition-all">
+                        <img 
+                            src="assets/images/screenshot-5.png" 
+                            alt="Student GO Скриншот 5" 
+                            class="w-full h-full object-cover rounded-[20px]" 
+                            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'560\' viewBox=\'0 0 280 560\' fill=\'%23101712\'><rect width=\'280\' height=\'560\' fill=\'%23101712\'/><rect x=\'12\' y=\'12\' width=\'256\' height=\'536\' rx=\'16\' fill=\'%23080c0a\' stroke=\'%231c2d22\' stroke-width=\'2\'/><text x=\'50%\' y=\'45%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2310b981\' font-family=\'sans-serif\' font-size=\'14\' font-weight=\'bold\'>assets/images/</text><text x=\'50%\' y=\'52%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%23ffffff\' font-family=\'sans-serif\' font-size=\'12\'>screenshot-5.png</text></svg>'"
+                        />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- APK Installation Guide Section -->
+    <section id="install-guide" class="py-14 bg-dark-card/30 border-y border-dark-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
+                <div class="text-xs font-bold text-brand-400 uppercase tracking-widest">Инструкция</div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Установка на Android</h2>
+                <p class="text-slate-400 text-xs sm:text-sm">3 простых шага для первой установки приложения</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Step 1 -->
+                <div class="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-xl bg-brand-500 text-slate-950 font-black flex items-center justify-center text-sm">
+                            1
+                        </div>
+                        <i class="fa-solid fa-file-arrow-down text-brand-400 text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Скачайте файл</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Нажмите кнопку <strong class="text-slate-200">«Скачать»</strong> и подтвердите сохранение установочного файла на ваше устройство.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-xl bg-brand-500 text-slate-950 font-black flex items-center justify-center text-sm">2</div>
+                        <i class="fa-solid fa-gear text-brand-400 text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Разрешите установку</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        В открытом окне разрешите установку приложений из внешних источников, если возникнет подобный запрос.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="p-6 rounded-2xl bg-dark-card border border-dark-border space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="w-9 h-9 rounded-xl bg-brand-500 text-slate-950 font-black flex items-center justify-center text-sm">
+                            3
+                        </div>
+                        <i class="fa-solid fa-circle-check text-brand-400 text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Запустите приложениe</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Нажмите <strong class="text-slate-200">«Установить»</strong> и дождитесь завершения процесса. После этого вы сможете открыть приложение и начать пользоваться всеми его функциями.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="mt-8 text-center">
+                <button onclick="triggerDirectDownload()" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-400 active:scale-95 text-slate-950 font-extrabold text-xs transition-all shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Скачать Student GO</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical System Specs Section -->
+    <section id="specs" class="py-14">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto space-y-6">
+                
+                <div class="text-center space-y-2">
+                    <div class="text-xs font-bold text-brand-400 uppercase tracking-widest">Информация</div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Системные требования</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-2xl bg-dark-card border border-dark-border space-y-1">
+                        <div class="text-xs text-slate-500">Версия ОС</div>
+                        <div class="text-sm font-bold text-white">Android 7.0+</div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-dark-card border border-dark-border space-y-1">
+                        <div class="text-xs text-slate-500">Размер файла</div>
+                        <div class="text-sm font-bold text-white">24.5 МБ</div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-dark-card border border-dark-border space-y-1">
+                        <div class="text-xs text-slate-500">Архитектура</div>
+                        <div class="text-sm font-bold text-white">ARM64-v8a / armeabi-v7a</div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-dark-card border border-dark-border space-y-1">
+                        <div class="text-xs text-slate-500">Интернет</div>
+                        <div class="text-sm font-bold text-brand-400">Не обязательно</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-14 bg-dark-card/30 border-t border-dark-border">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10 space-y-2">
+                <div class="text-xs font-bold text-brand-400 uppercase tracking-widest">Помощь</div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Часто задаваемые вопросы</h2>
+            </div>
+
+            <div class="space-y-3">
+                
+                <div class="rounded-2xl bg-dark-card border border-dark-border overflow-hidden">
+                    <button onclick="toggleFaq(1)" class="w-full p-5 text-left flex items-center justify-between text-sm font-bold text-white active:bg-dark-hover transition-colors">
+                        <span>Безопасно ли скачивать .apk с сайта?</span>
+                        <i id="faq-icon-1" class="fa-solid fa-chevron-down text-xs text-slate-500 transition-transform"></i>
+                    </button>
+                    <div id="faq-body-1" class="hidden px-5 pb-5 text-xs text-slate-400 leading-relaxed border-t border-dark-border/40 pt-3">
+                        Да, файл публикуется напрямую разработчиками и не содержит сторонних модулей.
+                    </div>
+                </div>
+
+                <div class="rounded-2xl bg-dark-card border border-dark-border overflow-hidden">
+                    <button onclick="toggleFaq(2)" class="w-full p-5 text-left flex items-center justify-between text-sm font-bold text-white active:bg-dark-hover transition-colors">
+                        <span>Как обновлять приложение?</span>
+                        <i id="faq-icon-2" class="fa-solid fa-chevron-down text-xs text-slate-500 transition-transform"></i>
+                    </button>
+                    <div id="faq-body-2" class="hidden px-5 pb-5 text-xs text-slate-400 leading-relaxed border-t border-dark-border/40 pt-3">
+                        Достаточно скачать свежий файл APK с этой страницы и установить его поверх текущей версии. Все сохранённые данные останутся на месте.
+                    </div>
+                </div>
+
+                <div class="rounded-2xl bg-dark-card border border-dark-border overflow-hidden">
+                    <button onclick="toggleFaq(3)" class="w-full p-5 text-left flex items-center justify-between text-sm font-bold text-white active:bg-dark-hover transition-colors">
+                        <span>Нужен ли постоянный интернет?</span>
+                        <i id="faq-icon-3" class="fa-solid fa-chevron-down text-xs text-slate-500 transition-transform"></i>
+                    </button>
+                    <div id="faq-body-3" class="hidden px-5 pb-5 text-xs text-slate-400 leading-relaxed border-t border-dark-border/40 pt-3">
+                        Нет, приложение полноценно работает и без подключенного интернета где вы бы не были.
+                    </div>
+                </div>
+                <div class="rounded-2xl bg-dark-card border border-dark-border overflow-hidden">
+                    <button onclick="toggleFaq(4)" class="w-full p-5 text-left flex items-center justify-between text-sm font-bold text-white active:bg-dark-hover transition-colors">
+                        <span>Что делать если заметили ошибку?</span>
+                        <i id="faq-icon-4" class="fa-solid fa-chevron-down text-xs text-slate-500 transition-transform"></i>
+                    </button>
+                    <div id="faq-body-4" class="hidden px-5 pb-5 text-xs text-slate-400 leading-relaxed border-t border-dark-border/40 pt-3">
+                        В таком случае, вам необходимо обратиться к разработчикам по ссылке <a href="https://instagram.com/oshtu_chat" target="_blank" rel="noopener noreferrer">
+    <strong>Instagram</strong>
+</a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-dark-border py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-lg bg-brand-500 flex items-center justify-center text-slate-950 font-black text-xs">GO</div>
+                <span class="font-bold text-slate-300">Student GO v1.1.0</span>
+                <span>© 2026</span>
+            </div>
+            <div class="text-slate-400">
+                <span>От студентов для студентов</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Download Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-dark-card border border-brand-500/40 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-brand-500 text-slate-950 flex items-center justify-center text-sm font-bold">
+                <i class="fa-solid fa-download"></i>
+            </div>
+            <div>
+                <div class="text-xs font-bold text-white" id="toastTitle">Скачивание началось</div>
+                <div class="text-[11px] text-slate-300" id="toastMsg">Скачивание student-go-v1.1.0.apk</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Horizontal Screenshot Carousel Scrolling Logic
+        function scrollCarousel(direction) {
+            const container = document.getElementById('screenshotCarousel');
+            if (!container) return;
+            const scrollAmount = 300; // Approx card width + gap
+            if (direction === 'left') {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        // Direct Download Trigger Function
+        function triggerDirectDownload() {
+            showToast('Загрузка файла', 'Сохранение student-go-v1.1.0.apk...');
+            
+            const dummyLink = document.createElement('a');
+            dummyLink.href = '#';
+            dummyLink.setAttribute('download', 'student-go-v1.1.0.apk');
+            document.body.appendChild(dummyLink);
+            document.body.removeChild(dummyLink);
+        }
+
+        // Display Notification Toast
+        function showToast(title, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMsg').innerText = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // FAQ Toggle Logic
+        function toggleFaq(id) {
+            const body = document.getElementById(`faq-body-${id}`);
+            const icon = document.getElementById(`faq-icon-${id}`);
+
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                body.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // Mobile Menu Drawer Toggle Logic
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
